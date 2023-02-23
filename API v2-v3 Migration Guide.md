@@ -1,9 +1,11 @@
-Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.
+**DISCLAIMER** Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.
 
 # Migration guide from API v2 to API v3 - code snippets
 
 This guide is designed to facilitate the migration of your existing tools that are not using the latest version of VirusTotal’s API (v3 from now on) to interact with your services. 
 Additionally, it is useful to familiarize you with v3 endpoints, consolidate the basics and improve performance by automating manual tasks.
+
+#### Table of content 
 
 * [Submitting samples, getting file reports, and rescanning files](#set1)
     * [Submit file (smaller than 32MB)](#set1.1)
