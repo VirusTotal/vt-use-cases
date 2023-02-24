@@ -441,7 +441,7 @@ if dump_to_file(f'{TIME}_file_feeds.bzip2', res):
 
 
 ```python
-ffrom datetime import timedelta, datetime
+from datetime import timedelta, datetime
 import os
 import requests
 from helpers import dump_to_file
