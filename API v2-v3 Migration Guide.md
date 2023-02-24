@@ -503,7 +503,7 @@ pprint(clusters)
 
 ### Download file <a name="set5.2"></a>
 
-In addition to getting reports on a file based on its hash, you can also download the file by sending a request to VirusTotal’s file download endpoint. You can choose to receive the file in either JSON or XML format. The response will contain the file content, which you can save to your computer.
+In addition to getting reports on a file based on its hash, you can also download the file by sending a request to VirusTotal’s file download endpoint. The response will contain the file content, which you can save to your computer.
 
 In the code snippet below, the get_file function takes the file hash and returns the content of the file after sending a GET request to VT’s download endpoint.
 
