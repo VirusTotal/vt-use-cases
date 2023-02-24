@@ -5,7 +5,7 @@
 This guide is designed to facilitate the migration of your existing tools that are not using the latest version of VirusTotal’s API (v3 from now on) to interact with your services. 
 Additionally, it is useful to familiarize you with v3 endpoints, consolidate the basics and improve performance by automating manual tasks.
 
-❗ Please note that some of the use cases make use of auxiliar functions or methods. All of them are implemented on the [Helper methods](#set7) section. For the shake of clarity, the API key used in the code snippets below is configured as an environment variable (VT_APIKEY). For production uses, please use a secure key management system instead.
+❗ Please note that some of the use cases make use of auxiliary functions or methods. All of them are implemented on the [Helper methods](#set7) section. For the sake of clarity, the API key used in the code snippets below is configured as an environment variable (VT_APIKEY). For production uses, please use a secure key management system instead.
 
 #### Table of content 
 
@@ -35,12 +35,12 @@ Additionally, it is useful to familiarize you with v3 endpoints, consolidate the
 
 ## Submitting samples, getting file reports, and rescanning files <a name="set1"></a>
 
-VirusTotal’s most popular use cases are scanning files and getting file reports. Additionally, rescanning files provides information updated over time, which makes it very valuable and places it in the top ranking of must-know.
+File scanning and report generation functionalities are among VirusTotal’s most popular use cases. Additionally, rescanning files provides information updated over time, which makes it very valuable and places it in the top ranking of must-know resources for threat analysis.
 
 ### Submit file (smaller than 32MB) <a name="set1.1"></a>
 
-As for v2, for v3 there are 2 ways of submitting files to VirusTotal, mainly based on file size. When a file is uploaded, it is automatically analyzed without the user asking for it.
-The following code snippet shows how to submit files smaller than 32 MB. The file path is required and as a result the status of the request is printed out. To check file analysis result, file’s report must be requested.
+Similar to v2, there are 2 ways of submitting files to VirusTotal in v3, which are based on file size. When a file is uploaded, it is automatically analyzed without any user action required.
+The following code snippet shows how to submit files smaller than 32 MB. The file path is specified and the status of the request is printed out. To check the file analysis result, the file’s report must be requested.
 
 ```python
 import os
@@ -75,13 +75,11 @@ if res is not None and 'data' in res and 'id' in res['data']:
 
 ### Submit file (larger than 32MB) <a name="set1.2"></a>
 
-Submitting files larger than 32 MB requires 2 steps:
-- Request a specific upload URL - v3 endpoint: /files/upload_url 
-- Send the POST request to the new URL - v3 endpoint: /files
+Submitting files larger than 32 MB invloves 2 steps:
+- Request a specific upload URL using the v3 endpoint: /files/upload_url 
+- Send the POST request to the new URL using the v3 endpoint: /files
 
-When a file is uploaded, it is automatically analyzed without the user asking for it.
-
-This example shows how to submit files larger than 32 MB in 2 steps. File’s path is required and as a result the status of the POST request is printed out.
+Once the file is uploaded, it is automatically analyzed without any user input required. The following example demonstrates how to submit files larger than 32 MB in two steps, with the file path specified and the status of the POST request printed out.
 
 ❗Please note that if the file is larger than 200 MB you might experience issues. If the sample is a compressed file, try to upload the individual files instead.
 
@@ -132,9 +130,9 @@ if res and res.get('data', {}).get('type') == 'analysis':
 
 ### Get file report <a name="set1.3"></a>
 
-A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://developers.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties refer to the Getting file behaviour report section (link here).
+A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://developers.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties, refer to the Getting file behaviour report section (link here).
 
-The code snippet below, prints the whole JSON main (or static) report of a given file, based on its SHA256 hash as a parameter. SHA1 and MD5 hashes can be used as well, to uniquely identify files.
+The code snippet below prints the whole JSON main (or static) report of a given file, based on its SHA256 hash. SHA1 and MD5 hashes can also be used to uniquely identify files.
 
 ```python
 import os
@@ -157,13 +155,11 @@ pprint(report)
 
 ### Rescan file <a name="set1.4"></a>
 
-Malware detection solutions need to adapt to new malware trends constantly. Sometimes a sample is not detected as malicious at first, but after a while, based on detection tools updates and improvements, it is suddenly classified then as malicious.
+Malware detection solutions must keep up with new malware trends and adapt accordingly. Sometimes a sample that was not initially detected as malicious could be classified as such later on based on updates and improvements in detection tools. When malicious files are not detected as malicious during the initial scan, the best approach is to rescan the file and check the report again, especially if the last analysis date is too old.
 
-When suspicious files initially are not detected as malicious and the last analysis date is too old, the best approach is to rescan the sample and check its report again.
+The following example shows how to rescan a file without having to submit it again. You will need to provide the file hash, and the status of the request will be printed out. Accepted hashes to uniquely identify the file are: SHA256, SHA1 and MD5.
 
-This example shows how to rescan a file without submitting it again. File’s hash is required and as a result the status of the request is printed out. Accepted hashes to uniquely identify the file are: SHA256, SHA1 and MD5.
-
-❗Please note that by submitting a file that is already part of VirusTotal, it will be automatically rescaned.
+❗Please note that by submitting a file that has already been uploaded to VirusTotal, it will be automatically rescaned.
 
 ```python
 import os
@@ -188,7 +184,7 @@ if res and res.get('data', {}).get('type') == 'analysis':
 
 ## Getting file behaviour reports and downloading network traffic <a name="set2"></a>
 
-In addition to the static analysis and AV verdict, VirusTotal provides results of a second phase analysis process. Samples submitted to VirusTotal are detonated in several sandboxes. Analyzing files this way produces valuable data on their behaviour and artifacts supporting it.
+In addition to static analyses and AV verdicts, VirusTotal provides results of a second phase analysis process. Samples submitted to VirusTotal are detonated in several sandboxes. Analyzing files this way produces valuable data on their behaviour and artifacts supporting them.
 
 ❗Please note that many samples implement anti-sandboxing techniques, so it is not always possible to get all the details. For the same reason, not all sandboxes are going to produce the same output.
 
@@ -196,7 +192,7 @@ In addition to the static analysis and AV verdict, VirusTotal provides results o
 
 The file behaviour report for v2 is a unique JSON structure covering all data gathered from detonating the sample in a single sandbox (unique integration available).
 
-Unlike v2, v3 provides multiple sandbox integrations, and reports can be provided by sandbox  ([1](https://developers.virustotal.com/reference/get-file-behaviour-id)) or by aggregating the reports from all sandboxes ([2](https://developers.virustotal.com/reference/get-all-behavior-reports-for-a-file)) as a summary of all of them. Another difference is that in v3, the system API calls are not included in the reports. There’s a dedicated endpoint ([Get a detailed HTML behaviour report](https://developers.virustotal.com/reference/get-file-behaviour-html)) for them, which requires the sandbox providing this data to be identified.
+Unlike v2, v3 provides multiple sandbox integrations, and reports can be provided by sandbox  ([1](https://developers.virustotal.com/reference/get-file-behaviour-id)) or by aggregating the reports from all sandboxes ([2](https://developers.virustotal.com/reference/get-all-behavior-reports-for-a-file)). Another difference is that in v3, the system API calls are not included in the reports. There’s a dedicated endpoint ([Get a detailed HTML behaviour report](https://developers.virustotal.com/reference/get-file-behaviour-html)) for them, which requires the sandbox providing this data to be identified.
 
 ❗Please note that not all sandboxes can provide API calls. Refer to [In-house Sandboxes behavioural analysis products](https://support.virustotal.com/hc/en-us/articles/6253253596957-In-house-Sandboxes-behavioural-analysis-products) and [External behavioural engines sandboxes](https://support.virustotal.com/hc/en-us/articles/7904672302877-External-behavioural-engines-sandboxes) that show which sandboxes can provide the “__HTML behaviour report__” under the “**Low Level Report**” feature.
 
@@ -252,9 +248,9 @@ if dump_to_file(REPORT_FILE_NAME, res):
 
 ### Download files’s network traffic <a name="set2.2"></a>
 
-During the file’s sandbox detonation, the network traffic is monitored and stored in a PCAP file. This file can be downloaded for further analysis outside of VirusTotal’s environment. Please note that both API versions proved the PCAP file generated with v3.
+During the file’s sandbox detonation, the network traffic is monitored and stored in a PCAP file. This file can be downloaded for further analysis outside of VirusTotal’s environment.
 
-The code snippet below, stores the PCAP network traffic file of a given file detonation on a given sandbox. It requires a file identifier (SHA256, SHA1 or MD5 hash), a sandbox name and the name that the PCAP file has to be saved with. As a result the status of the request is printed out.
+The code snippet below, stores the PCAP network traffic file of a given file detonation on a given sandbox. The file identifier (SHA256, SHA1 or MD5 hash), a sandbox name, and the desired name for the PCAP file are required. As a result the status of the request is printed out.
 
 ```python
 import os
@@ -280,15 +276,15 @@ if dump_to_file(PCAP_FILE_NAME, res):
 
 ## Scanning URLs, getting reports for URLs, domains, and IP addresses <a name="set3"></a>
 
-In addition to files, VirusTotal also scans URLs, and from them, it spreads relationships to domains and IP addresses which are also automatically scanned. Information on these representative infrastructure elements provides a more complete and comprehensive view of the scope of threat campaigns.
+In addition to scanning files, VirusTotal also performs scans on URLs, and extracts associations with domains and IP addresses which are also automatically scanned. Information on these representative infrastructure elements provides a more complete and comprehensive view of the scope of threat campaigns.
 
 ### Scan URL <a name="set3.1"></a>
 
-VirusTotal provides a specific endpoint for scanning URLs. The same endpoint can be used also for rescaning URLs which are already part of the VirusTotal dataset. Attackers have been seen to take advantage of legitimate infrastructure to perpetrate their attacks, so rescanning is recommended for those suspicious URLs whose last analysis is very old.
+VirusTotal provides a specific endpoint for scanning URLs. The same endpoint can also be used to rescan URLs that are already part of the VirusTotal dataset. Attackers have been seen to take advantage of legitimate infrastructure to perpetrate their attacks, so rescanning is recommended for those suspicious URLs whose last analysis date is very old.
 
 This example shows how to request a URL analysis, which is required and as a result the status of the request is printed out.
 
-To check file analysis result, file’s report must be requested as in the previous example (link to Get URL report)
+To check the analysis result, a URL report must be requested.
 
 ```python
 import os
@@ -340,7 +336,7 @@ pprint(report)
 
 A domain’s report is a JSON data structure. For full context on domain report structure refer to [Domain object description](https://developers.virustotal.com/reference/domains-1).
 
-The code snippet below, prints the whole JSON report of a given domain.
+The code snippet below prints the whole JSON report for a given domain.
 
 ```python
 import os
@@ -397,11 +393,11 @@ While v2 has only one endpoint per entity, v3 has 2 endpoints per entity, one fo
 * By minute considerations
     * PER_MINUTE  parameter must be 'True'
     * v3 endpoint request time parameter format: YYYYMMDDhhmm
-    * The most recent batch has always a 60 minutes lag from the current time
+    * The most recent batch always has a 60 minutes lag from the current time
 * Hourly considerations
     * PER_MINUTE parameter must be 'False'
     * v3 endpoint request time parameter format: YYYYMMDDhh
-    * The most recent batch has always a 2 hours lag from the current time
+    * The most recent batch always has a 2 hours lag from the current time
  
 The code could be automatically run with a cron job.
 
