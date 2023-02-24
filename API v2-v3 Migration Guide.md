@@ -1,9 +1,11 @@
-**DISCLAIMER** Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.
+**DISCLAIMER:** Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.
 
 # Migration guide from API v2 to API v3 - code snippets
 
 This guide is designed to facilitate the migration of your existing tools that are not using the latest version of VirusTotal’s API (v3 from now on) to interact with your services. 
 Additionally, it is useful to familiarize you with v3 endpoints, consolidate the basics and improve performance by automating manual tasks.
+
+❗ Please note that some of the use cases make use of auxiliar functions or methods. All of them are implemented on the [Helper methods](#set7) section. For the shake of clarity, the API key used in the code snippets below is configured as an environment variable (VT_APIKEY). For production uses, please use a secure key management system instead.
 
 #### Table of content 
 
@@ -43,30 +45,31 @@ The following code snippet shows how to submit files smaller than 32 MB. The fil
 ```python
 import os
 import requests
+from helpers import get_file_size
 
-FILE_PATH = '/content/file_to_submit.exe'
+FILE_PATH = 'file_to_submit.exe'
 
-def submit_common_file(file_path):
-   # Get the file size in MB
-   file_size = get_file_size(file_path)
-   if file_size is None:
-       return None
-   if file_size > 32 :
-       print('File size is larger than 32 MB. Try VT /file/upload_url endpoint instead.')
-       return None
-   with open(file_path, 'rb') as file:
-       url = 'https://www.virustotal.com/api/v3/files'
-       files = {'file': file}
-       headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-       res = requests.post(url, files=files, headers=headers)
-       res.raise_for_status()
-       return res.json()
+def submit_small_file(file_path):
+  # Get the file size in MB
+  file_size = get_file_size(file_path)
+  if file_size is None:
+    return None
+  if file_size > 32 :
+    print('File size is larger than 32 MB. Try VT /file/upload_url endpoint instead.')
+    return None
+  with open(file_path, 'rb') as file:
+    url = 'https://www.virustotal.com/api/v3/files'
+    files = {'file': file}
+    headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+    res = requests.post(url, files=files, headers=headers)
+    res.raise_for_status()
+    return res.json()
 
-res = submit_common_file(FILE_PATH)
+res = submit_small_file(FILE_PATH)
 if res is not None and 'data' in res and 'id' in res['data']:
-   print(f'You can check the analysis status through https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
-else:
-   print('File coulden\'t be submitted.')
+  print(f'You can check the analysis status through '
+    f'https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
+
 ```
 
 
@@ -85,43 +88,46 @@ This example shows how to submit files larger than 32 MB in 2 steps. File’s pa
 ```python
 import os
 import requests
+from helpers import get_file_size
 
-FILE_PATH = './content/file_to_submit.exe'
+FILE_PATH = 'file_to_submit.exe'
 
-def submit_special_file(file_path):
-   # Get the file size in MB
-   file_size = get_file_size(file_path)
-   if file_size is None:
-       return None
-   if file_size > 200:
-       print('File too large. You might experience issues. If the sample is a compressed file, try to upload the inner individual files instead.')
-       return None
-   if file_size < 32:
-       print('File size is not larger than 32 MB. Try VT /files endpoint instead.')
-       return None
-   # Get the special url for uploading files larger than 32 MB
-   url = 'https://www.virustotal.com/api/v3/files/upload_url'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   # Set the url to the new one and submit the sample
-   res = res.json()
-   if 'data' in res:
-       url = res['data']
-       print(f'Special URL: {url}')
-       with open(file_path, 'rb') as file:
-           files = {'file': file}
-           headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-           res = requests.post(url, files=files, headers=headers)
-           res.raise_for_status()
-           return res.json()
-   return None
+def submit_large_file(file_path):
+  # Get the file size in MB
+  file_size = get_file_size(file_path)
+  if file_size is None:
+    return None
+  if file_size > 200:
+    print('File too large. You might experience issues. '
+        'If the sample is a compressed file, '
+        'try to upload the inner individual files instead.')
+    return None
+  if file_size < 32:
+    print('File size is not larger than 32 MB. Try VT /files endpoint instead.')
+    return None
+  # Get the special url for uploading files larger than 32 MB
+  url = 'https://www.virustotal.com/api/v3/files/upload_url'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  # Set the url to the new one and submit the sample
+  res = res.json()
+  if 'data' in res:
+    url = res['data']
+    print(f'Special URL: {url}')
+    with open(file_path, 'rb') as file:
+      files = {'file': file}
+      headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+      res = requests.post(url, files=files, headers=headers)
+      res.raise_for_status()
+      return res.json()
+  return None
 
-res = submit_special_file(FILE_PATH)
-if res is not None and 'data' in res and 'type' in res['data'] and 'id' in res['data'] and res['data']['type'] == 'analysis':
-   print(f'You can check the analysis status through https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
-else:
-   print('File couldn\'t be submitted.')
+res = submit_large_file(FILE_PATH)
+if res and res.get('data', {}).get('type') == 'analysis':
+  print(f'You can check the analysis status through '
+    f'https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
+
 ```
 
 ### Get file report <a name="set1.3"></a>
@@ -138,14 +144,15 @@ import requests
 FILE_SHA256_HASH = 'd01f0af65ccff0a2465a657a691a90d4e7bfd0f1a1430cea74f05415bcc5e795'
 
 def get_file_report(file_hash):
-   url = f'https://www.virustotal.com/api/v3/files/{file_hash}'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/files/{file_hash}'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 report = get_file_report(FILE_SHA256_HASH)
 pprint(report)
+
 ```
 
 ### Rescan file <a name="set1.4"></a>
@@ -165,17 +172,17 @@ import requests
 FILE_SHA256_HASH = 'dbdb558b60ab562296ec2e4f8d34c98f6593a8ffa100b30e54139e1d1409bc8d'
 
 def rescan_file(file_hash):
-   url = f'https://www.virustotal.com/api/v3/files/{file_hash}/analyse'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.post(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/files/{file_hash}/analyse'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.post(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 res = rescan_file(FILE_SHA256_HASH)
-if res is not None and 'data' in res and 'type' in res['data'] and 'id' in res['data'] and res['data']['type'] == 'analysis':
-   print(f'You can check the analysis status through https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
-else:
-   print('File couldn\'t be rescanned')
+if res and res.get('data', {}).get('type') == 'analysis':
+  print(f'You can check the analysis status through '
+   f'https://www.virustotal.com/api/v3/analyses/{res["data"]["id"]} endpoint.')
+
 ```
 
 
@@ -205,14 +212,15 @@ import requests
 FILE_SHA256_HASH = 'd529b406724e4db3defbaf15fcd216e66b9c999831e0b1f0c82899f7f8ef6ee1'
 
 def get_behaviour_report(file_hash):
-   url = f'https://www.virustotal.com/api/v3/files/{file_hash}/behaviours'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/files/{file_hash}/behaviours'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 report = get_behaviour_report(FILE_SHA256_HASH)
 pprint(report)
+
 ```
 
 #### Get file behaviour report - API calls <a name="set2.1.2"></a>
@@ -223,21 +231,23 @@ The code snippet below, prints the __HTML Low Level Report__,which includes API 
 import os
 import urllib
 import requests
+from helpers import dump_to_file
 
 FILE_SHA256_HASH = 'd529b406724e4db3defbaf15fcd216e66b9c999831e0b1f0c82899f7f8ef6ee1'
 SANDBOX = 'VirusTotal Jujubox'
 REPORT_FILE_NAME = 'myLowLevelReport.html'
 
 def get_behaviour_lowlevelreport(file_hash, sandbox):
-   url = f'https://www.virustotal.com/api/v3/file_behaviours/{file_hash}_{urllib.parse.quote(sandbox)}/html'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res
+  url = f'https://www.virustotal.com/api/v3/file_behaviours/{file_hash}_{urllib.parse.quote(sandbox)}/html'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res
 
 res = get_behaviour_lowlevelreport(FILE_SHA256_HASH, SANDBOX)
 if dump_to_file(REPORT_FILE_NAME, res):
-   print('Report saved.')
+  print('Report saved.')
+
 ```
 
 ### Download files’s network traffic <a name="set2.2"></a>
@@ -250,23 +260,22 @@ The code snippet below, stores the PCAP network traffic file of a given file det
 import os
 import urllib
 import requests
+from helpers import dump_to_file
 
 FILE_SHA256_HASH = 'd529b406724e4db3defbaf15fcd216e66b9c999831e0b1f0c82899f7f8ef6ee1'
 SANDBOX = 'VirusTotal Cuckoofork'
 PCAP_FILE_NAME = 'pcapv3.pcap'
 
-
 def get_network_traffic_pcap(file_hash, sandbox):
-   url = f'https://www.virustotal.com/api/v3/file_behaviours/{file_hash}_{urllib.parse.quote(sandbox)}/pcap'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res
-
+  url = f'https://www.virustotal.com/api/v3/file_behaviours/{file_hash}_{urllib.parse.quote(sandbox)}/pcap'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res
 
 res = get_network_traffic_pcap(FILE_SHA256_HASH, SANDBOX)
 if dump_to_file(PCAP_FILE_NAME, res):
-   print('PCAP file saved.')
+  print('PCAP file saved.')
 ```
 
 ## Scanning URLs, getting reports for URLs, domains, and IP addresses <a name="set3"></a>
@@ -289,14 +298,15 @@ import requests
 URL_TO_SCAN = 'http://btcmx.net/NDM3MmI3N2Q3OWVkNDgxZHY0Q1VLb1NwcUJEN3NtVy9QeVU2emR6REppWFJxYVdQdDkrZ0NpYXlReUVzeUt5Nmp6N1ZOeHlSRXEySEJmTmE'
 
 def scan_url(payload):
-   url = 'https://www.virustotal.com/api/v3/urls'
-   headers = {'accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY'], 'content-type': 'application/x-www-form-urlencoded'}
-   res = requests.post(url, data=f'url={payload}', headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = 'https://www.virustotal.com/api/v3/urls'
+  headers = {'accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY'], 'content-type': 'application/x-www-form-urlencoded'}
+  res = requests.post(url, data=f'url={payload}', headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 res = scan_url(URL_TO_SCAN)
 pprint(res)
+
 ```
 
 ### Get URL report <a name="set3.2"></a>
@@ -313,15 +323,16 @@ import requests
 URL_TO_CHECK = 'https://www.luckypatchers.com/download/'
 
 def get_url_report(url):
-   url = base64.urlsafe_b64encode(url.encode()).decode().strip('=')
-   url = f'https://www.virustotal.com/api/v3/urls/{url}'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = base64.urlsafe_b64encode(url.encode()).decode().strip('=')
+  url = f'https://www.virustotal.com/api/v3/urls/{url}'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 report = get_url_report(URL_TO_CHECK)
 pprint(report)
+
 ```
 
 
@@ -339,14 +350,15 @@ import requests
 DOMAIN = 'asfdasdasdasdasddfgdfgasdasd.com'
 
 def get_domain_report(domain):
-   url = f'https://www.virustotal.com/api/v3/domains/{domain}'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/domains/{domain}'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 report = get_domain_report(DOMAIN)
 pprint(report)
+
 ```
 
 ### Get IP address report <a name="set3.4"></a>
@@ -363,14 +375,15 @@ import requests
 IP_ADDRESS = '8.8.8.8'
 
 def get_ip_report(ip_address):
-   url = f'https://www.virustotal.com/api/v3/ip_addresses/{ip_address}'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/ip_addresses/{ip_address}'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 report = get_ip_report(IP_ADDRESS)
 pprint(report)
+
 ```
 
 ## Feeds for enrichment <a name="set4"></a>
@@ -400,29 +413,31 @@ The code could be automatically run with a cron job.
 from datetime import timedelta, datetime
 import os
 import requests
+from helpers import dump_to_file
 
 PER_MINUTE = True
 
 TIME = None
 if PER_MINUTE:
-    TIME = (datetime.utcnow() - timedelta(hours = 1)).strftime('%Y%m%d%H%M')
+  TIME = (datetime.utcnow() - timedelta(hours = 1)).strftime('%Y%m%d%H%M')
 else:
-    TIME = (datetime.utcnow() - timedelta(hours = 2)).strftime('%Y%m%d%H')
+  TIME = (datetime.utcnow() - timedelta(hours = 2)).strftime('%Y%m%d%H')
 
 def get_file_feed(per_minute, time):
-    url = None
-    if per_minute:
-        url = f'https://www.virustotal.com/api/v3/feeds/files/{time}'
-    else:
-        url = f'https://www.virustotal.com/api/v3/feeds/files/hourly/{time}'
-    headers={'x-apikey': os.environ['VT_APIKEY']}
-    res = requests.get(url, headers=headers, stream=True, allow_redirects=True)
-    res.raise_for_status()
-    return res
+  url = None
+  if per_minute:
+    url = f'https://www.virustotal.com/api/v3/feeds/files/{time}'
+  else:
+    url = f'https://www.virustotal.com/api/v3/feeds/files/hourly/{time}'
+  headers={'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers, stream=True, allow_redirects=True)
+  res.raise_for_status()
+  return res
 
 res = get_file_feed(PER_MINUTE, TIME)
 if dump_to_file(f'{TIME}_file_feeds.bzip2', res):
-    print('bzip2 file saved.')
+  print('bzip2 file saved.')
+
 ```
 
 ### Getting URL feed <a name="set4.2"></a>
@@ -430,32 +445,34 @@ if dump_to_file(f'{TIME}_file_feeds.bzip2', res):
 
 
 ```python
-from datetime import timedelta, datetime
+ffrom datetime import timedelta, datetime
 import os
 import requests
+from helpers import dump_to_file
 
 PER_MINUTE = False
 
 TIME = None
 if PER_MINUTE:
-    TIME = (datetime.utcnow() - timedelta(hours = 1)).strftime('%Y%m%d%H%M')
+  TIME = (datetime.utcnow() - timedelta(hours = 1)).strftime('%Y%m%d%H%M')
 else:
-    TIME = (datetime.utcnow() - timedelta(hours = 2)).strftime('%Y%m%d%H')
+  TIME = (datetime.utcnow() - timedelta(hours = 2)).strftime('%Y%m%d%H')
 
 def get_url_feed(per_minute, time):
-    url = None
-    if per_minute:
-        url = f'https://www.virustotal.com/api/v3/feeds/urls/{time}'
-    else:
-        url = f'https://www.virustotal.com/api/v3/feeds/urls/hourly/{time}'
-    headers={'x-apikey': os.environ['VT_APIKEY']}
-    res = requests.get(url, headers=headers, stream=True, allow_redirects=True)
-    res.raise_for_status()
-    return res
+  url = None
+  if per_minute:
+    url = f'https://www.virustotal.com/api/v3/feeds/urls/{time}'
+  else:
+    url = f'https://www.virustotal.com/api/v3/feeds/urls/hourly/{time}'
+  headers={'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers, stream=True, allow_redirects=True)
+  res.raise_for_status()
+  return res
 
 res = get_url_feed(PER_MINUTE, TIME)
 if dump_to_file(f'{TIME}_url_feeds.bzip2', res):
-    print('bzip2 file saved.')
+  print('bzip2 file saved.')
+
 ```
 
 
@@ -477,14 +494,15 @@ import requests
 DATE = '2022-12-31'
 
 def get_clusters(date):
-   url = f'https://www.virustotal.com/api/v3/stats/vhash_clusters?date={date}'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/stats/vhash_clusters?date={date}'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 clusters = get_clusters(DATE)
 pprint(clusters)
+
 ```
 
 ### Download file <a name="set5.2"></a>
@@ -497,20 +515,22 @@ In the code snippet below, the get_file function takes the file hash and returns
 ```python
 import os
 import requests
+from helpers import dump_to_file
 
 FILE_SHA256_HASH = 'd529b406724e4db3defbaf15fcd216e66b9c999831e0b1f0c82899f7f8ef6ee1'
 FILE_NAME = 'downloaded_sample'
 
 def get_file(file_hash):
-   url = f'https://www.virustotal.com/api/v3/files/{file_hash}/download'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res
+  url = f'https://www.virustotal.com/api/v3/files/{file_hash}/download'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res
 
 res = get_file(FILE_SHA256_HASH)
 if dump_to_file(FILE_NAME, res):
-   print('File saved.')
+  print('File saved.')
+
 ```
 
 ## Intelligence search via API <a name="set6"></a>
@@ -529,14 +549,15 @@ import requests
 QUERY = 'entity:file attack_technique:T1055 p:10+ fs:2023-02-19+'
 
 def advanced_search(query):
-   url = f'https://www.virustotal.com/api/v3/intelligence/search?query={urllib.parse.quote(query)}&limit=10&descriptors_only=false'
-   headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
-   res = requests.get(url, headers=headers)
-   res.raise_for_status()
-   return res.json()
+  url = f'https://www.virustotal.com/api/v3/intelligence/search?query={urllib.parse.quote(query)}&limit=10&descriptors_only=false'
+  headers = {'Accept': 'application/json', 'x-apikey': os.environ['VT_APIKEY']}
+  res = requests.get(url, headers=headers)
+  res.raise_for_status()
+  return res.json()
 
 res = advanced_search(QUERY)
 pprint(res)
+
 ```
 
 ## Helper methods <a name="set7"></a>
@@ -544,14 +565,25 @@ pprint(res)
 This section covers auxiliary functions used by the main use cases. 
 
 ```python
+import logging
+import os
+
 def dump_to_file(file_name, response):
-   try:
-       with open(file_name, 'wb') as fd:
-           for chunk in response.iter_content(chunk_size=65536):
-               fd.write(chunk)
-       return True
-   except Exception as ex:
-       logging.error(ex)
+  try:
+    with open(file_name, 'wb') as fd:
+      for chunk in response.iter_content(chunk_size=65536):
+        fd.write(chunk)
+    return True
+  except Exception as ex:
+    logging.error(ex)
+
+
+def get_file_size(file_path):
+  try:
+    return os.stat(file_path).st_size/(1024*1024)
+  except Exception as ex:
+    logging.error(ex)
+
 ```
 
 
