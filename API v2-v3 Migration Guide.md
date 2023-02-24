@@ -130,7 +130,7 @@ if res and res.get('data', {}).get('type') == 'analysis':
 
 ### Get file report <a name="set1.3"></a>
 
-A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://developers.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties, refer to the Getting file behaviour report section (link here).
+A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://developers.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties, refer to the Get file behaviour report section.
 
 The code snippet below prints the whole JSON main (or static) report of a given file, based on its SHA256 hash. SHA1 and MD5 hashes can also be used to uniquely identify files.
 
