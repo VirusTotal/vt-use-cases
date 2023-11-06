@@ -24,7 +24,7 @@ print('**DISCLAIMER:** Please note that this code is for educational purposes on
 GROUP_ID = 'Your group ID'
 
 """ 
-Getting group users 
+Getting group users by group ID.
 VT API endpoint reference: https://developers.virustotal.com/reference/get-group-users
 """
 def get_users_list(group_id):

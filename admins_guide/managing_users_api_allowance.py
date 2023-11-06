@@ -15,7 +15,7 @@ DESCRIPTION
 REQUIREMENTS
 	Admin privileges -> API key as VT_APIKEY environment variable (os.environ['VT_APIKEY'])
 	Update DAILY_LIMIT variable to the allowance of API requests the users are going to be limited to.  
-	Update USERS_IDS variable. Add to this list the user ID of users you want to remove from your group.
+	Update USERS_IDS variable. Add to this list the user ID of users you want to edit their daily API cap.
 		Get users IDs via web https://www.virustotal.com/gui/group/virustotal/users or via API through the getting_group_users_and_service_accounts.py script (username).
 """
 
