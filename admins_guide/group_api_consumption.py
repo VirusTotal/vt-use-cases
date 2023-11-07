@@ -41,6 +41,11 @@ def get_group_api_consumption(group_id, start_date, last_date):
 	res = res.json()
 	# remove not consuming endpoints
 	res.get('data',{}).pop('daily_endpoints_not_consuming_quota')
+	# remove days with no consumption
+	keys = list(res.get('data',{}).get('daily',{}).keys())
+	for key in keys:
+		if not res.get('data',{}).get('daily',{}).get(key):
+			res.get('data',{}).get('daily',{}).pop(key)
 	return res
 
 
