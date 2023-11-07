@@ -39,10 +39,7 @@ def get_users_list(group_id):
 		res.raise_for_status()
 		res = res.json()
 		users = users + res.get('data',[])
-		if res.get('links',{}).get('next', None):
-			url = res.get('links',{}).get('next', None)
-		else:
-			url = None
+		url = res.get('links',{}).get('next', None)
 	return users
 
 """ 
