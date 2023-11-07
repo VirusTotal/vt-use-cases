@@ -59,7 +59,7 @@ def get_user_info(user_id):
 	res = requests.get(url, headers=headers)
 	res.raise_for_status()
 	res = res.json()
-	first_name = res.get('data',{}).get('attributes',{}).get('first_name', None)
+	first_name = res['data']['attributes'].get('first_name', None)
 	last_name = res.get('data',{}).get('attributes',{}).get('last_name', None)
 	email = res.get('data',{}).get('attributes',{}).get('email', None)
 	return first_name, last_name, email
