@@ -38,7 +38,7 @@ def get_users_list(group_id):
 		res = requests.get(url, headers=headers)
 		res.raise_for_status()
 		res = res.json()
-		users = users + res.get('data',[])
+		users.extend(res.get('data',[]))
 		url = res.get('links',{}).get('next', None)
 	return users
 
