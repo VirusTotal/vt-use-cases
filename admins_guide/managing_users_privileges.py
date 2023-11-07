@@ -45,7 +45,7 @@ def grant_admin_privileges(group_id, email_addresses):
 		'content-type': 'application/json'
 	}
 	for email_address in email_addresses:
-		payload.append({'type':'user','id':f'{email_address}'})
+		payload.append({'type':'user','id': email_addres})
 	payload = {'data':payload}
 	res = requests.post(url, json=payload, headers=headers)
 	res.raise_for_status()
