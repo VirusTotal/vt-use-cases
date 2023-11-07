@@ -15,8 +15,8 @@ DESCRIPTION
 	Getting VT API group consumption between 2 dates.
 REQUIREMENTS
 	Admin privileges -> API key as VT_APIKEY environment variable (os.environ['VT_APIKEY'])
-	Update START_DATE variable to the start day you want to check group API consumption. Please note that available data includes only the last 60 natural days.
-	Update LAST_DATE variable to the final day you want to check group API consumption. Please note that available data includes only the last 60 natural days.
+	Update START_DATE variable to the start day (yyyymmdd format) you want to check group API consumption. Please note that available data includes only the last 60 natural days.
+	Update LAST_DATE variable to the final day (yyyymmdd format) you want to check group API consumption. Please note that available data includes only the last 60 natural days.
 	Update GROUP_ID variable. Check out your group ID here: https://www.virustotal.com/gui/group/virustotal/users
 """
 
@@ -39,6 +39,8 @@ def get_group_api_consumption(group_id, start_date, last_date):
 	res = requests.get(url, headers=headers)
 	res.raise_for_status()
 	res = res.json()
+	# remove not consuming endpoints
+	res.get('data',{}).pop('daily_endpoints_not_consuming_quota')
 	return res
 
 

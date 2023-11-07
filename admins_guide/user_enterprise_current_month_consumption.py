@@ -12,16 +12,19 @@ import requests
 
 """
 DESCRIPTION
-	Getting current month VT enterprise user consumption.
+	Getting current month VT enterprise users consumption.
 REQUIREMENTS
 	Admin privileges -> API key as VT_APIKEY environment variable (os.environ['VT_APIKEY'])
-	Update USER_ID variable with the user ID whose month VT enterprise consumption you want to check:
-		User ID via https://www.virustotal.com/gui/group/virustotal/users or via API through the getting_group_users_and_service_accounts.py script (username)).
+	Update USERS_IDS variable. Add to this list the user ID of users whose month VT enterprise consumption you want to check.
+		Get users IDs via web https://www.virustotal.com/gui/group/virustotal/users or via API through the getting_group_users_and_service_accounts.py script (username).
 """
 
 print('**DISCLAIMER:** Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.')
 
-USER_ID = 'userID'
+USERS_IDS = [
+	'userID1',
+	'userID2'
+]
 
 """ 
 Getting current month VT enterprise user consumption by user ID.
@@ -44,8 +47,10 @@ def get_user_vt_enterprise_consumption(user_id):
 	return res
 
 
-def main(user_id):
-	pprint(get_user_vt_enterprise_consumption(user_id))
+def main(users_ids):
+	for user_id in users_ids:
+		print(f'\nUSER: {user_id}')
+		pprint(get_user_vt_enterprise_consumption(user_id))
 
 if __name__ == "__main__":
-	main(USER_ID)
+	main(USERS_IDS)
