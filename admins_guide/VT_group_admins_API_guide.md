@@ -6,9 +6,9 @@ The purpose of this project is to provide examples of the most common use cases 
 
 Bellow use case code snippets may require some of the following parameters:
 
-* VirusTotal group ID -> check it [here](https://www.virustotal.com/gui/group/virustotal/users), on the **GROUP PREFERENCES** section, **Group ID** field.
-* VirusTotal user ID -> check it [here](https://www.virustotal.com/gui/group/virustotal/users), on the **Group members** section by clicking on any user to pivot to its **USER PROFILE** where user ID is found near the user avatar. 
-* VirusTotal user API key -> check it [here](https://www.virustotal.com/gui/user/alexandraam/apikey).
+* VirusTotal group ID -> check it [here](https://www.virustotal.com/gui/group/{group_id}/users), on the **GROUP PREFERENCES** section, **Group ID** field.
+* VirusTotal user ID -> check it [here](https://www.virustotal.com/gui/group/{group_id}/users), on the **Group members** section by clicking on any user to pivot to its **USER PROFILE** where user ID is found near the user avatar. 
+* VirusTotal user API key -> check it [here](https://www.virustotal.com/gui/user/{username}/apikey).
 
 Additionally, please note that the API key used for authentication/authorization in the code snippets below is set as an environment variable.
 
