@@ -31,19 +31,16 @@ Adding users (by their email addresses) to VirusTotal group.
 VT API endpoint reference: https://developers.virustotal.com/reference/update-group-users
 """
 def add_users_to_group(group_id, email_addresses):
-	payload = []
 	url = f'https://www.virustotal.com/api/v3/groups/{group_id}/relationships/users'
 	headers = {
 		'accept': 'application/json',
 		'x-apikey': os.environ['VT_APIKEY'],
 		'content-type': 'application/json'
 	}
-	for email_address in email_addresses:
-		payload.append({'type':'user','id':f'{email_address}'})
-	payload = {'data':payload}
+	payload = {'data': [{'type':'user','id': e} for e in email_addresses]}
 	res = requests.post(url, json=payload, headers=headers)
 	res.raise_for_status()
-	print(res.status_code)
+	print('Users added successfully to the group.')
 
 
 def main(group_id, email_addresses):
