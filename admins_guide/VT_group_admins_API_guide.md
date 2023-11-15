@@ -1,6 +1,6 @@
 # VirusTotal group administrators API walkthrough guide
 
-The purpose of this project is to provide examples of the most common use cases that VirusTotal group administrators may find useful, with a focus on the VT API.
+The purpose of this project is to provide examples of the most common use cases that VirusTotal group administrators may find useful, with a focus on the VirusTotal API v3.
 
 ## Requirements
 
