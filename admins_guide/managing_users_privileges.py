@@ -1,75 +1,85 @@
-import os
+"""
+**DISCLAIMER:**
+    Please note that this code is for educational purposes only.
+    It is not intended to be run directly in production.
+    This is provided on a best effort basis.
+    Please make sure the code you run does what you expect it to do.
+"""
+
+import argparse
 import requests
 
-"""
-**DISCLAIMER:** 
-	Please note that this code is for educational purposes only. 
-	It is not intended to be run directly in production. 
-	This is provided on a best effort basis. 
-	Please make sure the code you run does what you expect it to do.
-"""
+print(
+    "**DISCLAIMER:** Please note that this code is for educational purposes only. "
+    "It is not intended to be run directly in production. "
+    "This is provided on a best effort basis. "
+    "Please make sure the code you run does what you expect it to do."
+)
 
-"""
-DESCRIPTION
-	Managing group members admin privileges; granting and revoking admin privileges.
-REQUIREMENTS
-	Admin privileges -> API key as VT_APIKEY environment variable (os.environ['VT_APIKEY'])
-	Update GROUP_ID variable. Check out your group ID here: https://www.virustotal.com/gui/group/virustotal/users
-	Update GRANT_ADMIN_PRIVILEGES_EMAIL_ADDRESSES variable. Add to this list the email addresses of users you want to grant admin privieges to.
-	Update REVOKE_ADMIN_PRIVILEGES_USERS_IDS variable. Add to this list the user ID of users you want to revoke admin privileges from.
-		Get users IDs via web https://www.virustotal.com/gui/group/virustotal/users (Filter by -> View only admin users) or via API through the getting_group_users_and_service_accounts.py script (username).
-"""
+def grant_admin_privileges(apikey, group_id, email_addresses):
+    """
+    Granting admin privileges to a list of users (by their email addresses).
+    VT API endpoint reference: https://developers.virustotal.com/reference/post-group-administrators
+    """
 
-print('**DISCLAIMER:** Please note that this code is for educational purposes only. It is not intended to be run directly in production. This is provided on a best effort basis. Please make sure the code you run does what you expect it to do.')
+    url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators"
+    headers = {
+        "accept": "application/json",
+        "x-apikey": apikey,
+        "content-type": "application/json",
+    }
+    payload = {"data": [{"type": "user", "id": e} for e in email_addresses]}
+    res = requests.post(url, json=payload, headers=headers)
+    res.raise_for_status()
+    print("\nAdmin privileges granted successfully.")
 
-GROUP_ID = 'Your group ID'
-GRANT_ADMIN_PRIVILEGES_EMAIL_ADDRESSES = [
-	'user1@companydomain.com',
-	'user2@companydomain.com'
-]
-REVOKE_ADMIN_PRIVILEGES_USERS_IDS = [
-	'userID1',
-	'userID2'
-]
+def revoke_admin_privileges(apikey, group_id, user_id):
+    """
+    Revoking admin privileges of a user (by its user ID).
+    VT API endpoint reference: https://developers.virustotal.com/reference/delete-user-group-administrator
+    """
 
-""" 
-Granting admin privileges to a list of users (by their email addresses). 
-VT API endpoint reference: https://developers.virustotal.com/reference/post-group-administrators
-"""
-def grant_admin_privileges(group_id, email_addresses):
-	payload = []
-	url = f'https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators'
-	headers = {
-		'accept': 'application/json',
-		'x-apikey': os.environ['VT_APIKEY'],
-		'content-type': 'application/json'
-	}
-	for email_address in email_addresses:
-		payload.append({'type':'user','id': email_addres})
-	payload = {'data':payload}
-	res = requests.post(url, json=payload, headers=headers)
-	res.raise_for_status()
-	print(res.status_code)
+    url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators/{user_id}"
+    headers = {
+        "accept": "application/json",
+        "x-apikey": apikey,
+    }
+    res = requests.delete(url, headers=headers)
+    res.raise_for_status()
+    print(f"\nAdmin privileges revoked successfully for user {user_id}.")
 
-""" 
-Revoking admin privileges of a user (by its user ID). 
-VT API endpoint reference: https://developers.virustotal.com/reference/delete-user-group-administrator
-"""
-def revoke_admin_privileges(group_id,user_id):
-	url = f'https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators/{user_id}'
-	headers = {
-		'accept': 'application/json',
-		'x-apikey': os.environ['VT_APIKEY'],
-	}
-	res = requests.delete(url, headers=headers)
-	res.raise_for_status()
-	print(res.status_code)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Managing group members admin privileges: granting and revoking admin privileges."
+    )
+    parser.add_argument("--apikey", required=True, help="Your VirusTotal API key")
+    parser.add_argument(
+        "--group_id",
+        required=True,
+        help="Your VT group ID. Check https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/VT_group_admins_API_guide.md Requirements.",
+    )
+    parser.add_argument(
+        "--grant_email_addresses",
+        default=[],
+        nargs="+",
+        help="List of email addresses of users you want to grant admin privileges to.",
+    )
+    parser.add_argument(
+        "--revoke_users_ids",
+        default=[],
+        nargs="+",
+        help="List of user ids you want to revoke admin privileges from. Check https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/VT_group_admins_API_guide.md Requirements.",
+    )
+    args = parser.parse_args()
 
-def main(group_id, email_addresses, revoke_admin_privileges_users_ids):
-	if len(email_addresses) > 0:
-		grant_admin_privileges(group_id,email_addresses)
-	for user_id in revoke_admin_privileges_users_ids:
-		revoke_admin_privileges(group_id,user_id)
+    if not args.grant_email_addresses and not args.revoke_users_ids:
+        raise Exception("one of the following arguments is required: "
+    		"--grant_email_addresses or --revoke_users_ids")
+
+    if args.grant_email_addresses:
+        grant_admin_privileges(args.apikey, args.group_id, args.grant_email_addresses)
+    for user_id in args.revoke_users_ids:
+        revoke_admin_privileges(args.apikey, args.group_id, user_id)
 
 if __name__ == "__main__":
-	main(GROUP_ID, GRANT_ADMIN_PRIVILEGES_EMAIL_ADDRESSES, REVOKE_ADMIN_PRIVILEGES_USERS_IDS)
+    main()
