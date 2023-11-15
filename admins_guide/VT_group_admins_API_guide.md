@@ -18,7 +18,8 @@ Additionally, please note that the API key used for authentication/authorization
 * <a name="group-members-management">Group members management
 	* Getting group members
 		- [Getting the list of users and service accounts](https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/getting_group_users_and_service_accounts.py)
-		- [Getting the list of users with 2FA not enabled]()
+		- [Getting the list of users with 2FA not enabled](https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/getting_users_without_2fa.py)
+		- [Getting the list of probably not authorized administrators](https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/getting_possible_unauthorized_admins.py)
 	* <a name="users-management">Users management
 		- [Adding new user to the VT group](https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/adding_users_to_group.py)
 		- [Removing user from the VT group](https://github.com/VirusTotal/vt-use-cases/blob/main/admins_guide/remove_users_from_group.py)
