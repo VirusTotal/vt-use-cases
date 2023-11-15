@@ -11,9 +11,6 @@ Bellow use case code snippets may require some of the following parameters:
 * VirusTotal service account ID -> check it on the [landing page](https://www.virustotal.com/gui/home/search) -> your name at the top right corner -> **VT enterprise group** option -> **Service accounts** section.
 * VirusTotal user API key -> check it on the [landing page](https://www.virustotal.com/gui/home/search) -> your name at the top right corner -> **API key** option -> **API Key** field.
 
-Additionally, please note that the API key used for authentication/authorization in the code snippets below is set as an environment variable.
-
-
 ## Use cases
 * <a name="group-members-management">Group members management
 	* Getting group members
