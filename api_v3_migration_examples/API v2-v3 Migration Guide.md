@@ -130,7 +130,7 @@ if res and res.get('data', {}).get('type') == 'analysis':
 
 ### Get file report <a name="set1.3"></a>
 
-A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://developers.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties, refer to the Get file behaviour report section.
+A file’s report is a JSON data structure. For full context on file report structure refer to [File object description](https://docs.virustotal.com/reference/files). The main file report is limited mostly to the file's static properties and AV verdicts. For dynamic properties, refer to the Get file behaviour report section.
 
 The code snippet below prints the whole JSON main (or static) report of a given file, based on its SHA256 hash. SHA1 and MD5 hashes can also be used to uniquely identify files.
 
@@ -192,9 +192,9 @@ In addition to static analyses and AV verdicts, VirusTotal provides results of a
 
 The file behaviour report for v2 is a unique JSON structure covering all data gathered from detonating the sample in a single sandbox (unique integration available).
 
-Unlike v2, v3 provides multiple sandbox integrations, and reports can be provided by sandbox  ([1](https://developers.virustotal.com/reference/get-file-behaviour-id)) or by aggregating the reports from all sandboxes ([2](https://developers.virustotal.com/reference/get-all-behavior-reports-for-a-file)). Another difference is that in v3, the system API calls are not included in the reports. There’s a dedicated endpoint ([Get a detailed HTML behaviour report](https://developers.virustotal.com/reference/get-file-behaviour-html)) for them, which requires the sandbox providing this data to be identified.
+Unlike v2, v3 provides multiple sandbox integrations, and reports can be provided by sandbox  ([1](https://docs.virustotal.com/reference/get-file-behaviour-id)) or by aggregating the reports from all sandboxes ([2](https://docs.virustotal.com/reference/get-all-behavior-reports-for-a-file)). Another difference is that in v3, the system API calls are not included in the reports. There’s a dedicated endpoint ([Get a detailed HTML behaviour report](https://docs.virustotal.com/reference/get-file-behaviour-html)) for them, which requires the sandbox providing this data to be identified.
 
-❗Please note that not all sandboxes can provide API calls. Refer to [In-house Sandboxes behavioural analysis products](https://support.virustotal.com/hc/en-us/articles/6253253596957-In-house-Sandboxes-behavioural-analysis-products) and [External behavioural engines sandboxes](https://support.virustotal.com/hc/en-us/articles/7904672302877-External-behavioural-engines-sandboxes) that show which sandboxes can provide the “__HTML behaviour report__” under the “**Low Level Report**” feature.
+❗Please note that not all sandboxes can provide API calls. Refer to [In-house Sandboxes behavioural analysis products](https://docs.virustotal.com/docs/in-house-sandboxes) and [External behavioural engines sandboxes](https://docs.virustotal.com/docs/external-sandboxes) that show which sandboxes can provide the “__HTML behaviour report__” under the “**Low Level Report**” feature.
 
 #### Get file behaviour report - except API calls <a name="set2.1.1"></a>
 
@@ -307,7 +307,7 @@ pprint(res)
 
 ### Get URL report <a name="set3.2"></a>
 
-A URL’s report is a JSON data structure. For full context on URL report structure refer to [URL object description](https://developers.virustotal.com/reference/url-object).
+A URL’s report is a JSON data structure. For full context on URL report structure refer to [URL object description](https://docs.virustotal.com/reference/url-object).
 The code snippet below, prints the whole JSON report of a given URL, that has to be [URL-safe](https://docs.python.org/3/library/base64.html#base64.urlsafe_b64encode) base64 encoded.
 
 ```python
@@ -334,7 +334,7 @@ pprint(report)
 
 ### Get domain report <a name="set3.3"></a>
 
-A domain’s report is a JSON data structure. For full context on domain report structure refer to [Domain object description](https://developers.virustotal.com/reference/domains-1).
+A domain’s report is a JSON data structure. For full context on domain report structure refer to [Domain object description](https://docs.virustotal.com/reference/domains-object).
 
 The code snippet below prints the whole JSON report for a given domain.
 
@@ -359,7 +359,7 @@ pprint(report)
 
 ### Get IP address report <a name="set3.4"></a>
 
-A IP address’s report is a JSON data structure. For full context on IP address report structure refer to [IP address object description](https://developers.virustotal.com/reference/ip-object).
+A IP address’s report is a JSON data structure. For full context on IP address report structure refer to [IP address object description](https://docs.virustotal.com/reference/ip-object).
 
 The code snippet below, prints the whole JSON report of a given IP address.
 

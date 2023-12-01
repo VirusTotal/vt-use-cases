@@ -20,7 +20,7 @@ print(
 def get_group_enterprise_current_month_consumption(apikey, user_id):
     """
     Getting current month VT enterprise group consumption by user ID or user API key.
-    VT API endpoint reference: https://developers.virustotal.com/reference/get-user-overall-quotas
+    VT API endpoint reference: https://docs.virustotal.com/reference/get-user-overall-quotas
     """
 
     url = f"https://www.virustotal.com/api/v3/users/{user_id}/overall_quotas"

@@ -20,7 +20,7 @@ print(
 def get_group_api_consumption(apikey, group_id, start_date, last_date):
     """
     Getting VT API group consumption between 2 dates (by group ID). Please note that available data includes only the last 60 natural days so your range dates have to be part of the last 60 natural days.
-    VT API endpoint reference: https://developers.virustotal.com/reference/group-api-usage
+    VT API endpoint reference: https://docs.virustotal.com/reference/group-api-usage
     """
 
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/api_usage?start_date={start_date}&end_date={last_date}"

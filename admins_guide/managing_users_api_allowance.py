@@ -19,7 +19,7 @@ print(
 def update_api_cap(apikey, user_id, daily_limit):
     """
     Update user API cap (by its user ID).
-    VT API endpoint reference: https://developers.virustotal.com/reference/patch-user-id
+    VT API endpoint reference: https://docs.virustotal.com/reference/patch-user-id
     """
 
     url = f"https://www.virustotal.com/api/v3/users/{user_id}"

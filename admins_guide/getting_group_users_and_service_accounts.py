@@ -21,7 +21,7 @@ def get_users_or_service_accounts(apikey, group_id, relationship):
     """
     Getting users or service accounts objects related to a group by group ID and 'users' or 'service_accounts' relationship.
         Requested users attributes: first_name,last_name,email.
-    VT API endpoint reference: https://developers.virustotal.com/reference/groups-relationships
+    VT API endpoint reference: https://docs.virustotal.com/reference/groups-relationships
     """
     users = []
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/{relationship}?attributes=first_name,last_name,email"

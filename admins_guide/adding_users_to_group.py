@@ -18,7 +18,7 @@ print(
 def add_users_to_group(apikey, group_id, email_addresses):
     """
     Adding users (by their email addresses) to VirusTotal group.
-    VT API endpoint reference: https://developers.virustotal.com/reference/update-group-users
+    VT API endpoint reference: https://docs.virustotal.com/reference/update-group-users
     """
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/users"
     headers = {

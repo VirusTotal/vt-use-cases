@@ -20,7 +20,7 @@ print(
 def get_group_users(apikey, group_id):
     """
     Getting group users ID list (by group ID).
-    VT API endpoint reference: https://developers.virustotal.com/reference/get-group-users
+    VT API endpoint reference: https://docs.virustotal.com/reference/get-group-users
     """
 
     users = []
@@ -38,7 +38,7 @@ def get_group_users(apikey, group_id):
 def get_user_vt_enterprise_consumption(apikey, user_id):
     """
     Getting current month VT enterprise user consumption by user ID.
-    VT API endpoint reference: https://developers.virustotal.com/reference/get-user-overall-quotas
+    VT API endpoint reference: https://docs.virustotal.com/reference/get-user-overall-quotas
     """
 
     url = f"https://www.virustotal.com/api/v3/users/{user_id}/overall_quotas"

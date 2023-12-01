@@ -20,7 +20,7 @@ print(
 def get_group_users(apikey, group_id):
     """
     Getting group users ID list (by group ID).
-    VT API endpoint reference: https://developers.virustotal.com/reference/get-group-users
+    VT API endpoint reference: https://docs.virustotal.com/reference/get-group-users
     """
 
     users = []
@@ -38,7 +38,7 @@ def get_group_users(apikey, group_id):
 def get_user_api_consumption(apikey, user_id, start_date, last_date):
     """
     Getting VT API user consumption between 2 dates (by user ID). Please note that available data includes only the last 60 natural days so your range dates have to be part of the last 60 natural days.
-    VT API endpoint reference: https://developers.virustotal.com/reference/user-api-usage
+    VT API endpoint reference: https://docs.virustotal.com/reference/user-api-usage
     """
 
     url = f"https://www.virustotal.com/api/v3/users/{user_id}/api_usage?start_date={start_date}&end_date={last_date}"

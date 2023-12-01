@@ -19,7 +19,7 @@ print(
 def grant_admin_privileges(apikey, group_id, email_addresses):
     """
     Granting admin privileges to a list of users (by their email addresses).
-    VT API endpoint reference: https://developers.virustotal.com/reference/post-group-administrators
+    VT API endpoint reference: https://docs.virustotal.com/reference/post-group-administrators
     """
 
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators"
@@ -36,7 +36,7 @@ def grant_admin_privileges(apikey, group_id, email_addresses):
 def revoke_admin_privileges(apikey, group_id, user_id):
     """
     Revoking admin privileges of a user (by its user ID).
-    VT API endpoint reference: https://developers.virustotal.com/reference/delete-user-group-administrator
+    VT API endpoint reference: https://docs.virustotal.com/reference/delete-user-group-administrator
     """
 
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/administrators/{user_id}"

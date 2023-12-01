@@ -21,7 +21,7 @@ def get_users_without_2fa(apikey, group_id):
     """
     Getting users objects related to a group by group ID, filtering by 2fa_enabled = false.
         Requested users attributes: first_name,last_name,email.
-    VT API endpoint reference: https://developers.virustotal.com/reference/groups-relationships
+    VT API endpoint reference: https://docs.virustotal.com/reference/groups-relationships
     """
 
     users = []

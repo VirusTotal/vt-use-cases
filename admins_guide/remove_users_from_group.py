@@ -18,7 +18,7 @@ print(
 def remove_user_from_group(apikey, group_id, user_id):
     """
     Removing user (by its user ID) from VirusTotal group.
-    VT API endpoint reference: https://developers.virustotal.com/reference/delete-user-from-group
+    VT API endpoint reference: https://docs.virustotal.com/reference/delete-user-from-group
     """
 
     url = f"https://www.virustotal.com/api/v3/groups/{group_id}/relationships/users/{user_id}"
